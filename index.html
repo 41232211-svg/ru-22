@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>香港・韓國旅遊｜簡易示範網站</title>
+  <style>
+    :root{
+      --bg:#f7f7f8; --card:#fffaf7; --muted:#666;
+      --hk-main:#ff6fae; --hk-accent:#ffd6e8;
+      --kr-main:#ff9ccc; --kr-accent:#ffe8f1;
+      --text-main: #333;
+      --glass: rgba(255,255,255,0.85);
+      --font-stack: system-ui, "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+    html { scroll-behavior: smooth; }
+    body{margin:0;background:linear-gradient(180deg, #fff0f6 0%, #ffe4ef 100%);color:var(--text-main);font-family:var(--font-stack);line-height:1.6}
+    
+    /* Header & Nav */
+    header{position:fixed;top:0;left:0;right:0;backdrop-filter:blur(10px);background:var(--glass);border-bottom:1px solid rgba(255,255,255,0.5);z-index:100;box-shadow: 0 2px 10px rgba(0,0,0,0.05);}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px}
+    nav{display:flex;align-items:center;justify-content:space-between;height:64px;position:relative;}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.2rem;color:#222;text-decoration:none}
+    .logo .dot{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--hk-main),var(--kr-main));display:inline-block}
+    
+    .nav-links{display:flex;gap:8px;align-items:center}
+    .nav-links a{color:#444;text-decoration:none;padding:8px 16px;border-radius:20px;font-weight:500;transition:all 0.2s}
+    .nav-links a:hover{background:#fff;color:var(--hk-main);box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+    
+    /* Mobile Menu Button */
+    .menu-toggle {display:none; background:none; border:none; font-size:1.5rem; cursor:pointer; color:#444;}
+    
+    /* Hero Section */
+    .hero{padding-top:100px;padding-bottom:60px}
+    .hero-grid{display:grid;grid-template-columns:1fr 340px;gap:30px;align-items:start}
+    
+    /* Cards */
+    .card{background:var(--card);border-radius:16px;box-shadow:0 8px 20px rgba(139, 139, 139, 0.08);padding:24px;border:1px solid rgba(255,255,255,0.6)}
+    h1 { margin-top: 0; color: #222; line-height: 1.3; }
+    
+    /* Buttons */
+    .btn{display:inline-block;padding:12px 24px;border-radius:50px;background:var(--hk-main);color:#fff;text-decoration:none;font-weight:600;border:none;cursor:pointer;transition:transform 0.1s, box-shadow 0.2s; box-shadow: 0 4px 10px rgba(255, 111, 174, 0.3);}
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(255, 111, 174, 0.4); }
+    .btn:active { transform: translateY(0); }
+    .btn.secondary{background:var(--kr-main);color:#fff;box-shadow: 0 4px 10px rgba(255, 156, 204, 0.3);}
+    .btn.secondary:hover { box-shadow: 0 6px 14px rgba(255, 156, 204, 0.4); }
+    
+    /* Destination Images */
+    .dest-cards{display:flex;gap:16px; margin-top: 20px;}
+    .dest{flex:1;border-radius:16px;overflow:hidden;position:relative;height:180px;box-shadow:0 4px 12px rgba(0,0,0,0.1); transition: transform 0.3s;}
+    .dest:hover { transform: translateY(-4px); }
+    .dest img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s}
+    .dest:hover img { transform: scale(1.05); }
+    .dest .meta{position:absolute;left:0;right:0;bottom:0;padding:40px 16px 16px;background:linear-gradient(to top, rgba(0,0,0,0.7), transparent);color:#fff;font-weight:700;text-shadow:0 2px 4px rgba(0,0,0,0.5)}
+    
+    /* Sections */
+    section{padding:40px 0}
+    h2{margin:0 0 16px 0; font-size: 1.8rem; position: relative; display: inline-block;}
+    h2::after { content:''; display: block; width: 40%; height: 4px; background: var(--hk-main); margin-top: 4px; border-radius: 2px;}
+    
+    /* Grid for sub-items */
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+    .card .title{font-weight:700; font-size: 1.1rem; margin-bottom: 6px; color: #444;}
+    
+    /* Tabs */
+    .tabs{display:flex;gap:10px;margin-bottom:16px; overflow-x: auto; padding-bottom: 4px;}
+    .tab{padding:8px 16px;border-radius:20px;background:#fff;border:1px solid #eee;cursor:pointer;white-space:nowrap;font-size: 0.95rem; color: #555; transition: all 0.2s;}
+    .tab:hover { background: #fcfcfc; border-color: #ddd; }
+    .tab.active{background:var(--text-main);color:#fff;border-color:var(--text-main);box-shadow: 0 4px 10px rgba(0,0,0,0.15);}
+    
+    /* Themes */
+    .hk-theme{border-left:6px solid var(--hk-main)}
+    .kr-theme{border-left:6px solid var(--kr-main)}
+    .hk-theme .tab.active { background: var(--hk-main); border-color: var(--hk-main); }
+    .kr-theme .tab.active { background: var(--kr-main); border-color: var(--kr-main); }
+
+    /* Footer */
+    footer{padding:40px 0;color:var(--muted);border-top:1px solid rgba(0,0,0,0.05); background: rgba(255,255,255,0.4); font-size: 0.9rem;}
+    
+    /* Form Elements */
+    input, textarea { width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #ddd; font-family: inherit; font-size: 1rem; background: #fff; }
+    input:focus, textarea:focus { outline: none; border-color: var(--hk-main); box-shadow: 0 0 0 3px var(--hk-accent); }
+
+    /* Modal for Success Message */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+    .modal { background: white; padding: 30px; border-radius: 16px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    
+    /* Responsive */
+    @media(max-width:880px){
+      .hero-grid{grid-template-columns:1fr;}
+      .nav-links{
+        display:none; 
+        position: absolute; top: 64px; left: 0; right: 0; 
+        background: white; flex-direction: column; 
+        padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+      }
+      .nav-links.show { display: flex; animation: slideDown 0.3s ease; }
+      @keyframes slideDown { from {opacity:0; transform: translateY(-10px);} to {opacity:1; transform: translateY(0);} }
+      .menu-toggle { display: block; }
+      .dest-cards { flex-direction: column; }
+      .dest { height: 160px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a href="#" class="logo"><span class="dot"></span>TravelPost</a>
+        <button class="menu-toggle" aria-label="開啟選單">☰</button>
+        <div class="nav-links">
+          <a href="#home">首頁</a>
+          <a href="#about">關於本站</a>
+          <a href="#hongkong">香港專區</a>
+          <a href="#korea">韓國專區</a>
+          <a href="#contact">聯絡我們</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="home" class="hero">
+      <div class="hero-grid">
+        <!-- Main Content -->
+        <div>
+          <div class="card">
+            <h1>香港 & 韓國<br><span style="color:var(--hk-main)">自助旅遊</span> 懶人包</h1>
+            <p style="color:var(--muted); font-size: 1.05rem;">
+              專為 18–30 歲年輕自由行旅客設計的精選行程。完全沒想法又想出國放鬆？<br>
+              這裡提供最直覺的景點、美食與交通建議。
+            </p>
+
+            <div class="dest-cards">
+              <a class="dest" href="#hongkong">
+                <!-- Added onerror fallback -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Flag_of_Hong_Kong.svg/1200px-Flag_of_Hong_Kong.svg.png" 
+                     onerror="this.src='https://via.placeholder.com/600x400?text=Hong+Kong'" 
+                     alt="Hong Kong">
+                <div class="meta">香港 Hong Kong</div>
+              </a>
+              <a class="dest" href="#korea">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg" 
+                     onerror="this.src='https://via.placeholder.com/600x400?text=Korea'" 
+                     alt="Korea">
+                <div class="meta">韓國 Korea</div>
+              </a>
+            </div>
+          </div>
+
+          <section id="about" style="padding-bottom:0">
+            <div class="card">
+              <h2>關於本站</h2>
+              <p style="color:var(--muted)">本站由熱愛旅遊的大學生維護，提供簡單的「一次性旅遊資訊」以及「必去景點懶人包」，省略複雜的歷史介紹，幫助你快速規劃 3-5 天的香港與韓國短程行程。</p>
+            </div>
+          </section>
+        </div>
+
+        <!-- Sidebar / Contact Info -->
+        <aside>
+          <div class="card" style="position:sticky; top: 90px;">
+            <h3>快速導覽</h3>
+            <p style="color:var(--muted);font-size:0.9rem">點擊下方按鈕直接跳轉：</p>
+            <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+              <a class="btn" style="flex:1;text-align:center" href="#hongkong">香港 HK</a>
+              <a class="btn secondary" style="flex:1;text-align:center" href="#korea">韓國 KR</a>
+            </div>
+            <hr style="margin:20px 0;border:none;border-top:1px solid #eee">
+            <div>
+              <h4 style="margin:0 0 8px 0">客服專線</h4>
+              <p style="margin:0;font-size:1.2rem;font-weight:700;color:var(--hk-main)">0912-334-556</p>
+              <p style="margin:4px 0 0;font-size:0.85rem;color:var(--muted)">週一至週五 09:00-18:00</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Travel Sections -->
+    <section id="travel-details">
+      <!-- Hong Kong -->
+      <article id="hongkong" class="card hk-theme">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px; margin-bottom: 20px;">
+          <div>
+            <h2 style="margin-bottom:6px">香港 Hong Kong</h2>
+            <p style="color:var(--muted);margin:0">復古與摩登交織的城市，美食與夜景的天堂。</p>
+          </div>
+        </div>
+        
+        <div class="tabs">
+          <button class="tab active" data-target="hk-attractions">🔥 必去景點</button>
+          <button class="tab" data-target="hk-food">🍜 美食推薦</button>
+          <button class="tab" data-target="hk-itinerary">📅 3天2夜行程</button>
+          <button class="tab" data-target="hk-trans">🚇 交通攻略</button>
+        </div>
+
+        <div id="hk-attractions" class="tab-pane">
+          <div class="cards">
+            <div class="card" style="box-shadow:none;border:1px solid #eee">
+              <div class="title">✨ 迪士尼樂園</div>
+              <p style="color:var(--muted);font-size:0.9rem">全球最小但最好拍的迪士尼，擁有獨家園區「魔雪奇緣世界」。</p>
+            </div>
+            <div class="card" style="box-shadow:none;border:1px solid #eee">
+              <div class="title">🚠 太平山頂纜車</div>
+              <p style="color:var(--muted);font-size:0.9rem">搭乘復古纜車上山，俯瞰維多利亞港百萬夜景。</p>
+            </div>
+            <div class="card" style="box-shadow:none;border:1px solid #eee">
+              <div class="title">🛍️ 旺角・廟街</div>
+              <p style="color:var(--muted);font-size:0.9rem">體驗最地道的香港街道，女人街、波鞋街與大排檔。</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="hk-food" class="tab-pane" style="display:none">
+          <div class="cards">
+            <div class="card" style="box-shadow:none;border:1px solid #eee">
+              <div class="title">澳洲牛奶公司</div>
+              <p style="color:var(--muted)">必點炒蛋多士與燉奶，體驗港式快節奏服務。</p>
+            </div>
+            <div class="card" style="box-shadow:none;border:1px solid #eee">
+              <div class="title">一點心 / 添好運</div>
+              <p style="color:var(--muted)">平價米其林港式點心，蝦餃燒賣必吃。</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="hk-itinerary" class="tab-pane" style="display:none">
+          <div style="background:#fffaf0;padding:20px;border-radius:12px">
+            <ol style="margin:0;padding-left:20px;color:#444;line-height:1.8">
+              <li><strong>Day 1:</strong> 抵達 → 尖沙咀海旁(星光大道) → 廟街夜市</li>
+              <li><strong>Day 2:</strong> 迪士尼樂園 (全日) OR 大嶼山天壇大佛</li>
+              <li><strong>Day 3:</strong> 中環半山手扶梯 → 買伴手禮(曲奇) → 機場</li>
+            </ol>
+          </div>
+        </div>
+
+        <div id="hk-trans" class="tab-pane" style="display:none">
+          <p><strong>八達通卡 (Octopus Card)：</strong>必備！可用於地鐵、巴士、便利商店與餐廳。</p>
+          <p><strong>機場快線：</strong>從機場到市區最快方式 (約24分鐘)。</p>
+        </div>
+      </article>
+
+      <!-- Korea -->
+      <article id="korea" class="card kr-theme" style="margin-top:30px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px; margin-bottom: 20px;">
+          <div>
+            <h2 style="margin-bottom:6px; background:var(--kr-main); -webkit-background-clip:text; color:transparent; background-clip:text; display:inline-block; color:#333">韓國 Korea</h2>
+            <p style="color:var(--muted);margin:0">首爾時尚、韓劇景點與無盡的購物體驗。</p>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" data-target="kr-attractions">📸 打卡景點</button>
+          <button class="tab" data-target="kr-food">🥩 必吃美食</button>
+          <button class="tab" data-target="kr-itinerary">📅 4天3夜行程</button>
+          <button class="tab" data-target="kr-trans">🚌 交通T-Money</button>
+        </div>
+
+        <div id="kr-attractions" class="tab-pane">
+          <div class="cards">
+            <div class="card" style="box-shadow:none;border:1px solid #eee">
+              <div class="title">🏯 景福宮 (穿韓服)</div>
+              <p style="color:var(--muted);font-size:0.9rem">穿著韓服可免費入場，必拍光化門守門將換崗儀式。</p>
+            </div>
+            <div class="card" style="box-shadow:none;border:1px solid #eee">
+              <div class="title">🗼 N首爾塔</div>
+              <p style="color:var(--muted);font-size:0.9rem">搭纜車上南山，掛上愛情鎖，俯瞰首爾夜景。</p>
+            </div>
+            <div class="card" style="box-shadow:none;border:1px solid #eee">
+              <div class="title">🛍️ 弘大 / 延南洞</div>
+              <p style="color:var(--muted);font-size:0.9rem">年輕人聚集地，充滿街頭表演、文創小店與咖啡廳。</p>
+            </div>
+          </div>
+        </div>
+        
+        <div id="kr-food" class="tab-pane" style="display:none">
+          <div class="cards">
+            <div class="card" style="box-shadow:none;border:1px solid #eee">
+              <div class="title">陳玉華一隻雞</div>
+              <p style="color:var(--muted)">東大門必吃蒜味雞湯，湯頭濃郁。</p>
+            </div>
+            <div class="card" style="box-shadow:none;border:1px solid #eee">
+              <div class="title">橋村炸雞</div>
+              <p style="color:var(--muted)">蜂蜜口味炸雞配啤酒 (Chimaek) 是宵夜首選。</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="kr-itinerary" class="tab-pane" style="display:none">
+           <div style="background:#fff5f8;padding:20px;border-radius:12px">
+            <ol style="margin:0;padding-left:20px;color:#444;line-height:1.8">
+              <li><strong>Day 1:</strong> 明洞換錢 → 首爾塔 → 明洞逛街</li>
+              <li><strong>Day 2:</strong> 韓服體驗(景福宮) → 北村韓屋村 → 三清島咖啡</li>
+              <li><strong>Day 3:</strong> 弘大購物 → 延南洞文青街 → 漢江公園吃泡麵</li>
+              <li><strong>Day 4:</strong> 樂天超市採買零食 → 機場</li>
+            </ol>
+          </div>
+        </div>
+
+        <div id="kr-trans" class="tab-pane" style="display:none">
+           <p><strong>T-Money 卡：</strong>韓國的悠遊卡，超商可買。地鐵與公車轉乘有優惠。</p>
+           <p><strong>Naver Map：</strong>在韓國 Google Map 不好用，強烈建議下載 Naver Map。</p>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- Contact Form Section -->
+    <section id="contact">
+      <div class="card" style="border: 2px solid var(--hk-main);">
+        <h2 style="text-align:center; margin-bottom:20px">聯絡我們</h2>
+        <div style="display:flex;gap:30px;flex-wrap:wrap; align-items: flex-start;">
+          
+          <div style="flex:1;min-width:280px">
+            <h3 style="margin-top:0">有任何問題嗎？</h3>
+            <p>若有行程規劃需求、網站建議或商務合作，歡迎填寫表單。</p>
+            <p>我們會將您的訊息直接寄送到管理員信箱。</p>
+            <div style="margin-top:20px; background:#f9f9f9; padding:15px; border-radius:10px;">
+              <p style="margin:0;font-weight:bold">管理員信箱：</p>
+              <p style="margin:5px 0 0; color:var(--hk-main); word-break: break-all;">41232211@gcloud.csu.edu.tw</p>
+            </div>
+          </div>
+
+          <!-- Form Logic -->
+          <form id="contactForm" style="flex:1.5;min-width:280px">
+            <label style="display:block;margin-bottom:12px;font-weight:600">您的姓名
+              <input type="text" id="formName" required placeholder="請輸入姓名">
+            </label>
+            <label style="display:block;margin-bottom:12px;font-weight:600">聯絡 Email
+              <input type="email" id="formEmail" required placeholder="example@email.com">
+            </label>
+            <label style="display:block;margin-bottom:12px;font-weight:600">詢問內容
+              <textarea id="formMsg" required placeholder="請輸入您想詢問的行程或問題..." style="height:120px"></textarea>
+            </label>
+            <button type="submit" class="btn" style="width:100%; font-size:1.1rem; margin-top:10px">送出訊息</button>
+          </form>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap; gap: 10px;">
+        <div>© 2025 TravelPost — 香港與韓國旅遊資訊網</div>
+        <div style="color:var(--muted); font-size: 0.8rem">Images from Unsplash</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal">
+      <div style="font-size: 3rem;">✅</div>
+      <h3>訊息已準備發送！</h3>
+      <p>系統將喚起您的郵件軟體。<br>請確認郵件內容後按下寄出。</p>
+      <button class="btn" onclick="closeModal()" style="margin-top:10px">好的，我知道了</button>
+    </div>
+  </div>
+
+  <script>
+    // 1. Tab switching logic
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const parent = btn.closest('article');
+        if(!parent) return;
+        parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        parent.querySelectorAll('.tab-pane').forEach(p => p.style.display='none');
+        const target = parent.querySelector('#' + btn.dataset.target);
+        if(target) {
+          target.style.display = 'block';
+          // Simple fade in effect
+          target.style.opacity = 0;
+          setTimeout(()=> target.style.opacity = 1, 50);
+          target.style.transition = 'opacity 0.3s';
+        }
+      })
+    });
+
+    // 2. Mobile Menu Logic
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('show');
+    });
+    
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('show');
+      });
+    });
+
+    // 3. Form Handling (Mailto Logic)
+    const contactForm = document.getElementById('contactForm');
+    const successModal = document.getElementById('successModal');
+    const adminEmail = "41232211@gcloud.csu.edu.tw";
+
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('formName').value;
+      const email = document.getElementById('formEmail').value;
+      const msg = document.getElementById('formMsg').value;
+      
+      // Construct email body
+      const subject = `[網站諮詢] 來自 ${name} 的訊息`;
+      const body = `姓名：${name}%0D%0AEmail：${email}%0D%0A%0D%0A詢問內容：%0D%0A${msg}`;
+      
+      // Trigger mailto
+      window.location.href = `mailto:${adminEmail}?subject=${subject}&body=${body}`;
+      
+      // Show success feedback
+      successModal.style.display = 'flex';
+      contactForm.reset();
+    });
+
+    function closeModal() {
+      successModal.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
